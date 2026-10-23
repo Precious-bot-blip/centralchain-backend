@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <!-- to open the camera -->
+    <queries>
+        <intent>
+            <action android:name="android.media.action.IMAGE_CAPTURE" />
+        </intent>
+    </queries>
+
+    <application
+        android:allowBackup="false"
+        android:label="@string/app_name"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.CentralChain"
+        android:usesCleartextTraffic="true">
+
+        <activity
+            android:name=".activities.MainActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity android:name=".activities.LoginActivity" />
+        <activity android:name=".activities.SignupActivity" />
+
+        <activity android:name=".activities.BuyerActivity" />
+        <activity android:name=".activities.ProductsActivity" />
+        <activity android:name=".activities.CreateOrderActivity" />
+        <activity android:name=".activities.OrderDetailsActivity" />
+
+        <activity android:name=".activities.SupplierActivity" />
+        <activity android:name=".activities.SupplierOrdersActivity" />
+        <activity android:name=".activities.InventoryActivity" />
+        <activity android:name=".activities.InventoryItemActivity" />
+
+        <activity android:name=".activities.ChatListActivity" />
+        <activity
+            android:name=".activities.ChatActivity"
+            android:windowSoftInputMode="adjustResize" />
+
+        <activity android:name=".activities.DriverActivity" />
+        <activity android:name=".activities.DeliveryDetailsActivity" />
+        <activity android:name=".activities.ProofOfDeliveryActivity" />
+
+        <activity android:name=".activities.AdminActivity" />
+        <activity android:name=".activities.UsersActivity" />
+        <activity android:name=".activities.UserFormActivity" />
+        <activity android:name=".activities.DeliveriesActivity" />
+
+        <!-- for saving the camera photo -->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="com.centralchain.app.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
+    </application>
+</manifest>

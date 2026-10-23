@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="20dp">
+
+        <include layout="@layout/view_header" />
+
+        <TextView style="@style/CC.Label" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Full name" />
+
+        <EditText
+            android:id="@+id/input_name"
+            style="@style/CC.Input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Full name"
+            android:importantForAutofill="no"
+            android:inputType="textPersonName|textCapWords" />
+
+        <TextView style="@style/CC.Label" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Email" />
+
+        <EditText
+            android:id="@+id/input_email"
+            style="@style/CC.Input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Email"
+            android:importantForAutofill="no"
+            android:inputType="textEmailAddress" />
+
+        <TextView style="@style/CC.Label" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Password" />
+
+        <EditText
+            android:id="@+id/input_password"
+            style="@style/CC.Input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Password (6+ characters)"
+            android:importantForAutofill="no"
+            android:inputType="textPassword" />
+
+        <TextView style="@style/CC.Label" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Role" />
+
+        <Spinner
+            android:id="@+id/spinner_role"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:background="@drawable/bg_input" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_save"
+            style="@style/CC.Button.Dark"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:text="Save user" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_delete"
+            style="@style/CC.Button.Danger"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Delete user"
+            android:visibility="gone" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_back"
+            style="@style/CC.Button.Dark"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="Back" />
+    </LinearLayout>
+</ScrollView>

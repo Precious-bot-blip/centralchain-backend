@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- main app colour -->
+    <color name="primary">#3C3AA1</color>
+
+    <!-- darker for back buttons and headers, light for chat bubbles -->
+    <color name="navy">#26246B</color>
+    <color name="light_blue">#ECECFA</color>
+
+    <color name="ink">#14132E</color>
+    <color name="muted">#5E5D7A</color>
+    <color name="surface">#F5F5FC</color>
+    <color name="card">#FFFFFF</color>
+    <color name="input">#EBEBF7</color>
+    <color name="stroke">#DCDCF0</color>
+    <color name="danger">#D92D20</color>
+    <color name="success">#12B76A</color>
+    <color name="warning">#F79009</color>
+    <color name="info">#2E90FA</color>
+    <color name="white">#FFFFFF</color>
+</resources>

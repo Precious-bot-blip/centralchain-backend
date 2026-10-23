@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="20dp">
+
+        <include layout="@layout/view_header" />
+
+
+        <TextView style="@style/CC.Label" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="SKU" />
+
+        <EditText
+            android:id="@+id/input_sku"
+            style="@style/CC.Input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="e.g. SKU-001"
+            android:importantForAutofill="no"
+            android:inputType="textCapCharacters" />
+
+        <TextView style="@style/CC.Label" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Item name" />
+
+        <EditText
+            android:id="@+id/input_name"
+            style="@style/CC.Input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="e.g. Steel Bolts M8"
+            android:importantForAutofill="no"
+            android:inputType="textCapSentences" />
+
+        <TextView style="@style/CC.Label" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Warehouse location" />
+
+        <EditText
+            android:id="@+id/input_location"
+            style="@style/CC.Input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="e.g. Aisle A - Shelf 1"
+            android:importantForAutofill="no"
+            android:inputType="textCapSentences" />
+
+        <LinearLayout
+            android:id="@+id/group_quantity"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView style="@style/CC.Label" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Quantity in stock" />
+
+            <EditText
+                android:id="@+id/input_quantity"
+                style="@style/CC.Input"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="e.g. 500"
+                android:importantForAutofill="no"
+                android:inputType="number" />
+        </LinearLayout>
+
+        <TextView style="@style/CC.Label" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Minimum safety threshold" />
+
+        <EditText
+            android:id="@+id/input_threshold"
+            style="@style/CC.Input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Low-stock warning level, e.g. 50"
+            android:importantForAutofill="no"
+            android:inputType="number" />
+
+        <TextView style="@style/CC.Label" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Unit price (R)" />
+
+        <EditText
+            android:id="@+id/input_price"
+            style="@style/CC.Input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="e.g. 2.55"
+            android:importantForAutofill="no"
+            android:inputType="numberDecimal" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_save"
+            style="@style/CC.Button.Primary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="Save item" />
+
+        <!-- only when editing -->
+        <LinearLayout
+            android:id="@+id/group_adjust"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/bg_card"
+            android:orientation="vertical"
+            android:padding="14dp"
+            android:visibility="gone">
+
+            <TextView
+                android:id="@+id/text_stock"
+                style="@style/CC.Body"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:orientation="horizontal">
+
+                <EditText
+                    android:id="@+id/input_delta"
+                    style="@style/CC.Input"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="+/- amount"
+                    android:importantForAutofill="no"
+                    android:inputType="numberSigned" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_adjust"
+                    style="@style/CC.Button.Primary"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:text="Apply" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_delete"
+            style="@style/CC.Button.Danger"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="Delete item"
+            android:visibility="gone" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_back"
+            style="@style/CC.Button.Primary"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="Back" />
+    </LinearLayout>
+</ScrollView>

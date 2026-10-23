@@ -166,8 +166,8 @@ public class PurchaseOrderService {
     public PurchaseOrderResponse dispatchOrder(Integer id, Integer driverId) {
         PurchaseOrder po = findOrderById(id);
 
-        if (!"APPROVED".equals(po.getStatus())) {
-            throw new ConflictException("Cannot dispatch — only APPROVED orders can be dispatched. Current status: " + po.getStatus());
+        if (!"APPROVED".equals(po.getStatus()) && !"PROCESSING".equals(po.getStatus())) {
+            throw new ConflictException("Cannot dispatch — order must be APPROVED or PROCESSING. Current status: " + po.getStatus());
         }
 
         User driver = userRepository.findById(driverId)

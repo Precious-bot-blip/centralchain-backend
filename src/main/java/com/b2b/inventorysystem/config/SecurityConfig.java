@@ -25,6 +25,7 @@ public class SecurityConfig {
         this.authEntryPoint = authEntryPoint;
         System.out.println(">>> Custom SecurityConfig loaded! <<<");
     }
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
@@ -46,31 +47,30 @@ public class SecurityConfig {
 
                         // USERS
                         .requestMatchers(HttpMethod.GET, "/api/users/**")
-                        .hasAnyRole("ADMIN", "WAREHOUSE_MANAGER", "SUPPLIER", "DRIVER")
+                        .hasAnyRole("ADMIN", "BUYER", "SUPPLIER", "DRIVER")
                         .requestMatchers(HttpMethod.POST, "/api/users/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/api/users/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/api/users/**").hasRole("ADMIN")
 
                         // INVENTORY
                         .requestMatchers(HttpMethod.GET, "/api/inventory/**")
-                        .hasAnyRole("ADMIN", "WAREHOUSE_MANAGER", "SUPPLIER")
+                        .hasAnyRole("ADMIN", "BUYER", "SUPPLIER")
                         .requestMatchers(HttpMethod.POST, "/api/inventory/**")
-                        .hasAnyRole("ADMIN", "WAREHOUSE_MANAGER")
+                        .hasAnyRole("ADMIN", "SUPPLIER")
                         .requestMatchers(HttpMethod.PUT, "/api/inventory/**")
-                        .hasAnyRole("ADMIN", "WAREHOUSE_MANAGER")
+                        .hasAnyRole("ADMIN", "SUPPLIER")
                         .requestMatchers(HttpMethod.PATCH, "/api/inventory/**")
-                        .hasAnyRole("ADMIN", "WAREHOUSE_MANAGER")
+                        .hasAnyRole("ADMIN", "SUPPLIER")
                         .requestMatchers(HttpMethod.DELETE, "/api/inventory/**")
-                        .hasAnyRole("ADMIN", "WAREHOUSE_MANAGER")
+                        .hasAnyRole("ADMIN", "SUPPLIER")
 
                         // PURCHASE ORDERS
                         .requestMatchers(HttpMethod.GET, "/api/purchase-orders/**")
-                        .hasAnyRole("ADMIN", "WAREHOUSE_MANAGER", "SUPPLIER", "DRIVER")
-
+                        .hasAnyRole("ADMIN", "BUYER", "SUPPLIER", "DRIVER")
                         .requestMatchers(HttpMethod.POST, "/api/purchase-orders")
-                        .hasAnyRole("ADMIN", "WAREHOUSE_MANAGER")
+                        .hasAnyRole("ADMIN", "BUYER")
                         .requestMatchers(HttpMethod.PUT, "/api/purchase-orders/**")
-                        .hasAnyRole("ADMIN", "WAREHOUSE_MANAGER")
+                        .hasAnyRole("ADMIN", "BUYER")
 
                         // Supplier accept — SUPPLIER only
                         .requestMatchers(HttpMethod.PATCH, "/api/purchase-orders/*/accept").hasRole("SUPPLIER")
@@ -78,26 +78,25 @@ public class SecurityConfig {
                         // Driver deliver — DRIVER only
                         .requestMatchers(HttpMethod.PATCH, "/api/purchase-orders/*/deliver").hasRole("DRIVER")
 
-                        // Admin/Manager transitions
+                        // Approve/Dispatch/Cancel — SUPPLIER DOES THIS
                         .requestMatchers(HttpMethod.PATCH, "/api/purchase-orders/*/approve")
-                        .hasAnyRole("ADMIN", "WAREHOUSE_MANAGER")
+                        .hasAnyRole("ADMIN", "SUPPLIER")
                         .requestMatchers(HttpMethod.PATCH, "/api/purchase-orders/*/dispatch")
-                        .hasAnyRole("ADMIN", "WAREHOUSE_MANAGER")
+                        .hasAnyRole("ADMIN", "SUPPLIER")
                         .requestMatchers(HttpMethod.PATCH, "/api/purchase-orders/*/cancel")
-                        .hasAnyRole("ADMIN", "WAREHOUSE_MANAGER")
-
+                        .hasAnyRole("ADMIN", "BUYER", "SUPPLIER")
                         .requestMatchers(HttpMethod.DELETE, "/api/purchase-orders/**")
-                        .hasAnyRole("ADMIN", "WAREHOUSE_MANAGER")
+                        .hasAnyRole("ADMIN", "BUYER", "SUPPLIER")
 
                         // DELIVERIES
                         .requestMatchers(HttpMethod.GET, "/api/deliveries/**")
-                        .hasAnyRole("ADMIN", "WAREHOUSE_MANAGER", "SUPPLIER", "DRIVER")
+                        .hasAnyRole("ADMIN", "BUYER", "SUPPLIER", "DRIVER")
                         .requestMatchers(HttpMethod.PATCH, "/api/deliveries/**")
                         .hasAnyRole("ADMIN", "DRIVER")
 
                         // MESSAGES
                         .requestMatchers("/api/messages/**")
-                        .hasAnyRole("ADMIN", "WAREHOUSE_MANAGER", "SUPPLIER", "DRIVER")
+                        .hasAnyRole("ADMIN", "BUYER", "SUPPLIER", "DRIVER")
 
                         // DEFAULT
                         .anyRequest().authenticated()

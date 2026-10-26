@@ -1,6 +1,7 @@
 package com.b2b.inventorysystem.dto.purchaseorder;
 
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -25,5 +26,9 @@ public class PurchaseOrderCreateRequest {
 
     @NotNull(message = "Supplier ID is required")
     private Integer assignedSupplierId;
+
+    @NotBlank(message = "Delivery address is required")
+    private String deliveryAddress;
+
 
 }

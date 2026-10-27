@@ -32,7 +32,7 @@ public class AuthService {
         this.jwtService = jwtService;
     }
 
-    // REGISTER (Generates OTP)
+    // REGISTER (OTP)
     public AuthResponse register(RegisterRequest request) {
         if (userRepository.existsByEmail(request.getEmail())) {
             throw new BadRequestException("Email already registered");

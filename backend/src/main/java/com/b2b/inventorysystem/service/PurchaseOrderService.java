@@ -34,18 +34,14 @@ public class PurchaseOrderService {
     }
 
     // READ — Admin/Manager sees ALL
-    // Supplier sees their own
     public List<PurchaseOrderResponse> getAllOrders(Integer requestingUserId, String requestingRole) {
         List<PurchaseOrder> orders;
 
         if ("SUPPLIER".equals(requestingRole)) {
-            // Suppliers only sees their own assigned POs
             orders = poRepository.findByAssignedSupplierUserId(requestingUserId);
         } else if ("DRIVER".equals(requestingRole)) {
-            // Drivers only sees POs assigned to them
             orders = poRepository.findByAssignedDriverUserId(requestingUserId);
         } else {
-            // Admin/Manager sees everything
             orders = poRepository.findAll();
         }
 

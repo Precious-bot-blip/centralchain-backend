@@ -4,9 +4,9 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+
 
 @Getter
 @Setter
@@ -21,5 +21,8 @@ public class InventoryResponse {
     private Integer quantityInStock;
     private Integer minSafetyThreshold;
     private BigDecimal unitPrice;
+    private Integer supplierId;
+    private String supplierName;
     private LocalDateTime updatedAt;
+
 }

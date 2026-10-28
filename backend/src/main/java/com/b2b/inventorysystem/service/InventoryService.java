@@ -4,11 +4,15 @@ import com.b2b.inventorysystem.dto.inventory.InventoryCreateRequest;
 import com.b2b.inventorysystem.dto.inventory.InventoryResponse;
 import com.b2b.inventorysystem.dto.inventory.InventoryUpdateRequest;
 import com.b2b.inventorysystem.entity.Inventory;
+import com.b2b.inventorysystem.entity.User;
 import com.b2b.inventorysystem.exception.BadRequestException;
 import com.b2b.inventorysystem.exception.ConflictException;
 import com.b2b.inventorysystem.exception.ResourceNotFoundException;
 import com.b2b.inventorysystem.repository.InventoryRepository;
 import org.springframework.stereotype.Service;
+import com.b2b.inventorysystem.repository.UserRepository;
+import com.b2b.inventorysystem.entity.User;
+
 
 import java.util.List;
 
@@ -16,9 +20,11 @@ import java.util.List;
 public class InventoryService {
 
     private final InventoryRepository inventoryRepository;
+    private final UserRepository userRepository;
 
-    public InventoryService(InventoryRepository inventoryRepository) {
+    public InventoryService(InventoryRepository inventoryRepository, UserRepository userRepository) {
         this.inventoryRepository = inventoryRepository;
+        this.userRepository = userRepository;
     }
 
     // READ
@@ -65,6 +71,9 @@ public class InventoryService {
             throw new ConflictException("SKU already exists: " + request.getSku());
         }
 
+        User supplier = userRepository.findById(request.getSupplierId())
+                .orElseThrow(() -> new ResourceNotFoundException("Supplier not found"));
+
         Inventory item = new Inventory();
         item.setSku(request.getSku());
         item.setItemName(request.getItemName());
@@ -72,6 +81,7 @@ public class InventoryService {
         item.setQuantityInStock(request.getQuantityInStock());
         item.setMinSafetyThreshold(request.getMinSafetyThreshold());
         item.setUnitPrice(request.getUnitPrice());
+        item.setSupplier(supplier);
 
         Inventory saved = inventoryRepository.save(item);
         return toResponse(saved);
@@ -124,6 +134,9 @@ public class InventoryService {
 
     // HELPER
     private InventoryResponse toResponse(Inventory item) {
+        Integer supplierId = item.getSupplier() != null ? item.getSupplier().getUserId() : null;
+        String supplierName = item.getSupplier() != null ? item.getSupplier().getFullName() : "Unassigned";
+
         return new InventoryResponse(
                 item.getItemId(),
                 item.getSku(),
@@ -132,6 +145,8 @@ public class InventoryService {
                 item.getQuantityInStock(),
                 item.getMinSafetyThreshold(),
                 item.getUnitPrice(),
+                supplierId,
+                supplierName,
                 item.getUpdatedAt()
         );
     }

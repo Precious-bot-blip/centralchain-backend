@@ -27,7 +27,6 @@ public interface PurchaseOrderRepository extends JpaRepository<PurchaseOrder, In
     @Query("SELECT p.poNumber FROM PurchaseOrder p WHERE p.poNumber LIKE :prefix% ORDER BY p.poNumber DESC LIMIT 1")
     Optional<String> findLatestPoNumberWithPrefix(@Param("prefix") String prefix);
 
-    @Query("SELECT p.item.itemName, SUM(p.quantity) FROM PurchaseOrder p GROUP BY p.item.itemName ORDER BY SUM(p.quantity) DESC")
-    List<Object[]> findTopOrderedItems();
-
+    @Query("SELECT p.item.itemName, SUM(p.quantity) FROM PurchaseOrder p WHERE p.item.supplier.userId = :supplierId GROUP BY p.item.itemName ORDER BY SUM(p.quantity) DESC")
+    List<Object[]> findTopOrderedItemsBySupplier(@Param("supplierId") Integer supplierId);
 }

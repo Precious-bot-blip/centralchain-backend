@@ -38,4 +38,7 @@ public class InventoryCreateRequest {
     @DecimalMin(value = "0.0", inclusive = false, message = "Price must be greater than 0")
     @Digits(integer = 8, fraction = 2, message = "Price must have up to 8 digits and 2 decimals")
     private BigDecimal unitPrice;
+
+    @NotNull(message = "Supplier ID is required")
+    private Integer supplierId;
 }

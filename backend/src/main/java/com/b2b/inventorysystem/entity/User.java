@@ -21,6 +21,12 @@ public class User {
     @Column(name = "user_id")
     private Integer userId;
 
+    @Column(name = "is_verified")
+    private Boolean isVerified = false;
+
+    @Column(name = "verification_code")
+    private String verificationCode;
+
     @Column(name = "full_name", nullable = false, length = 100)
     private String fullName;
 

@@ -31,6 +31,9 @@ public class PurchaseOrder {
     @Column(name = "quantity", nullable = false)
     private Integer quantity;
 
+    @Column(name = "delivery_address")
+    private String deliveryAddress;
+
     @Column(name = "status", nullable = false, length = 50)
     private String status = "PENDING";
 

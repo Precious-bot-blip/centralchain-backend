@@ -3,6 +3,7 @@ package com.b2b.inventorysystem.controller;
 import com.b2b.inventorysystem.dto.auth.AuthResponse;
 import com.b2b.inventorysystem.dto.auth.LoginRequest;
 import com.b2b.inventorysystem.dto.auth.RegisterRequest;
+import com.b2b.inventorysystem.dto.auth.VerifyRequest;
 import com.b2b.inventorysystem.service.AuthService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -30,4 +31,10 @@ public class AuthController {
         AuthResponse response = authService.login(request);
         return ResponseEntity.ok(response);
     }
+
+    @PostMapping("/verify")
+    public ResponseEntity<String> verifyAccount(@Valid @RequestBody VerifyRequest request) {
+        return ResponseEntity.ok(authService.verifyAccount(request));
+    }
+
 }

@@ -15,6 +15,7 @@ import com.centralchain.app.models.Delivery;
 import com.centralchain.app.network.ApiClient;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import retrofit2.Call;
@@ -60,6 +61,8 @@ public class DeliveriesActivity extends AppCompatActivity {
                 if (response.isSuccessful() && response.body() != null) {
                     deliveries.clear();
                     deliveries.addAll(response.body());
+                    // a to z by item name
+                    Collections.sort(deliveries, (a, b) -> a.itemName.compareToIgnoreCase(b.itemName));
                     adapter.notifyDataSetChanged();
                 } else {
                     Toast.makeText(DeliveriesActivity.this, ApiClient.getErrorMessage(response), Toast.LENGTH_LONG).show();

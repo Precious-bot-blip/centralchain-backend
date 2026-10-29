@@ -70,6 +70,7 @@
             <include android:id="@+id/row_created_by" layout="@layout/view_detail_row" />
             <include android:id="@+id/row_driver" layout="@layout/view_detail_row" />
             <include android:id="@+id/row_date" layout="@layout/view_detail_row" />
+            <include android:id="@+id/row_address" layout="@layout/view_detail_row" />
         </LinearLayout>
 
         <!-- delivery card, shows once the order is dispatched -->
@@ -112,6 +113,15 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:text="Dispatch to a driver"
+            android:visibility="gone" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_reassign"
+            style="@style/CC.Button.Primary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Change driver"
             android:visibility="gone" />
 
         <com.google.android.material.button.MaterialButton

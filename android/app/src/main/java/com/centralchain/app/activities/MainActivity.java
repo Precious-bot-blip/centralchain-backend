@@ -4,9 +4,12 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.centralchain.app.R;
 import com.centralchain.app.models.Role;
 import com.centralchain.app.network.SessionManager;
 
@@ -39,6 +42,13 @@ public class MainActivity extends AppCompatActivity {
         }
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         context.startActivity(intent);
+    }
+
+    // shows the role badge in the header
+    public static void showRole(Activity activity) {
+        TextView textRole = activity.findViewById(R.id.text_role);
+        textRole.setText(Role.getLabel(SessionManager.getRole(activity)));
+        textRole.setVisibility(View.VISIBLE);
     }
 
     // log out and go back to the login page

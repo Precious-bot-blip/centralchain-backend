@@ -16,6 +16,7 @@ import com.centralchain.app.network.ApiClient;
 import com.centralchain.app.network.SessionManager;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import retrofit2.Call;
@@ -33,6 +34,7 @@ public class BuyerActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_buyer);
+        MainActivity.showRole(this);
 
         TextView title = findViewById(R.id.screen_title);
         title.setText("Hi " + SessionManager.getFullName(this));
@@ -87,6 +89,9 @@ public class BuyerActivity extends AppCompatActivity {
                         pastOrders.add(order);
                     }
                 }
+                // a to z by item name
+                Collections.sort(activeOrders, (a, b) -> a.itemName.compareToIgnoreCase(b.itemName));
+                Collections.sort(pastOrders, (a, b) -> a.itemName.compareToIgnoreCase(b.itemName));
                 pastAdapter.notifyDataSetChanged();
                 activeAdapter.notifyDataSetChanged();
             }

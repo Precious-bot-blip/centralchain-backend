@@ -1,6 +1,7 @@
 package com.centralchain.app.activities;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -49,6 +50,7 @@ public class DeliveryDetailsActivity extends AppCompatActivity {
 
         btnAction.setOnClickListener(v -> onActionClick());
         btnFailed.setOnClickListener(v -> confirmFailed());
+        findViewById(R.id.btn_directions).setOnClickListener(v -> openMaps());
         findViewById(R.id.btn_back).setOnClickListener(v -> finish());
     }
 
@@ -100,6 +102,16 @@ public class DeliveryDetailsActivity extends AppCompatActivity {
         showRow(R.id.row_photo, "Photo", delivery.photoProofUrl);
         showRow(R.id.row_signature, "Signature", delivery.signatureUrl);
 
+        // address with a maps button
+        View cardAddress = findViewById(R.id.card_address);
+        if (delivery.deliveryAddress != null) {
+            TextView textAddress = findViewById(R.id.text_address);
+            textAddress.setText(delivery.deliveryAddress);
+            cardAddress.setVisibility(View.VISIBLE);
+        } else {
+            cardAddress.setVisibility(View.GONE);
+        }
+
         // buttons depend on the status
         if (Delivery.ASSIGNED.equals(delivery.deliveryStatus)) {
             btnAction.setText("Mark in transit");
@@ -133,6 +145,12 @@ public class DeliveryDetailsActivity extends AppCompatActivity {
             setRow(rowId, label, value);
             row.setVisibility(View.VISIBLE);
         }
+    }
+
+    // opens google maps with directions to the address
+    private void openMaps() {
+        String url = "https://www.google.com/maps/dir/?api=1&destination=" + Uri.encode(delivery.deliveryAddress);
+        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
     }
 
     private void onActionClick() {

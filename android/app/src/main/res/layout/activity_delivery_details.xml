@@ -72,6 +72,40 @@
             <include android:id="@+id/row_signature" layout="@layout/view_detail_row" />
         </LinearLayout>
 
+        <!-- address card, only shows if the api sends the address -->
+        <LinearLayout
+            android:id="@+id/card_address"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/bg_card"
+            android:orientation="vertical"
+            android:padding="16dp"
+            android:visibility="gone">
+
+            <TextView
+                style="@style/CC.Muted"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Deliver to" />
+
+            <TextView
+                android:id="@+id/text_address"
+                style="@style/CC.Body"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:textStyle="bold" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_directions"
+                style="@style/CC.Button.Primary"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="Get directions" />
+        </LinearLayout>
+
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_primary"
             style="@style/CC.Button.Primary"

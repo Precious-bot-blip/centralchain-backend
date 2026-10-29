@@ -46,11 +46,16 @@
             android:layout_height="wrap_content"
             android:text="Supplier" />
 
-        <Spinner
-            android:id="@+id/spinner_supplier"
+        <!-- comes from the item, cant be changed -->
+        <TextView
+            android:id="@+id/text_supplier"
+            style="@style/CC.Body"
             android:layout_width="match_parent"
             android:layout_height="48dp"
-            android:background="@drawable/bg_input" />
+            android:background="@drawable/bg_input"
+            android:gravity="center_vertical"
+            android:paddingStart="14dp"
+            android:paddingEnd="14dp" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_create"
@@ -58,7 +63,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
-            android:text="Place order" />
+            android:text="Checkout" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_back"

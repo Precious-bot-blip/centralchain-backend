@@ -1,6 +1,9 @@
 package com.centralchain.app.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
@@ -10,13 +13,8 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.centralchain.app.R;
-import com.centralchain.app.models.CreateOrderRequest;
 import com.centralchain.app.models.InventoryItem;
-import com.centralchain.app.models.PurchaseOrder;
-import com.centralchain.app.models.Role;
-import com.centralchain.app.models.User;
 import com.centralchain.app.network.ApiClient;
-import com.centralchain.app.network.SessionManager;
 import com.centralchain.app.utils.Validation;
 
 import java.util.ArrayList;
@@ -26,13 +24,13 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-// buyer places a new order
+// buyer picks an item and quantity, the supplier comes from the item
 public class CreateOrderActivity extends AppCompatActivity {
 
-    private Spinner spinnerItem, spinnerSupplier;
+    private Spinner spinnerItem;
+    private TextView textSupplier;
     private EditText inputQuantity;
     private List<InventoryItem> items = new ArrayList<>();
-    private List<User> suppliers = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,14 +41,26 @@ public class CreateOrderActivity extends AppCompatActivity {
         title.setText("Order supplies");
 
         spinnerItem = findViewById(R.id.spinner_item);
-        spinnerSupplier = findViewById(R.id.spinner_supplier);
+        textSupplier = findViewById(R.id.text_supplier);
         inputQuantity = findViewById(R.id.input_quantity);
+
+        // show the supplier of the picked item
+        spinnerItem.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                InventoryItem item = items.get(position);
+                textSupplier.setText(item.supplierId != null ? item.supplierName : "No supplier yet");
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
 
         findViewById(R.id.btn_create).setOnClickListener(v -> createOrder());
         findViewById(R.id.btn_back).setOnClickListener(v -> finish());
 
         loadItems();
-        loadSuppliers();
     }
 
     private void loadItems() {
@@ -82,38 +92,12 @@ public class CreateOrderActivity extends AppCompatActivity {
         });
     }
 
-    private void loadSuppliers() {
-        ApiClient.getApi(this).getUsers().enqueue(new Callback<List<User>>() {
-            @Override
-            public void onResponse(Call<List<User>> call, Response<List<User>> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    // only keep suppliers
-                    suppliers.clear();
-                    for (User user : response.body()) {
-                        if (Role.SUPPLIER.equals(user.roleName)) {
-                            suppliers.add(user);
-                        }
-                    }
-                    ArrayAdapter<User> adapter = new ArrayAdapter<>(CreateOrderActivity.this,
-                            android.R.layout.simple_spinner_dropdown_item, suppliers);
-                    spinnerSupplier.setAdapter(adapter);
-                } else {
-                    Toast.makeText(CreateOrderActivity.this, ApiClient.getErrorMessage(response), Toast.LENGTH_LONG).show();
-                }
-            }
-
-            @Override
-            public void onFailure(Call<List<User>> call, Throwable t) {
-                Toast.makeText(CreateOrderActivity.this, "Could not connect to the server", Toast.LENGTH_LONG).show();
-            }
-        });
-    }
-
+    // check the form then go to checkout
     private void createOrder() {
         String quantityText = inputQuantity.getText().toString();
 
-        if (items.isEmpty() || suppliers.isEmpty()) {
-            Toast.makeText(this, "Pick an item and a supplier", Toast.LENGTH_SHORT).show();
+        if (items.isEmpty()) {
+            Toast.makeText(this, "Pick an item", Toast.LENGTH_SHORT).show();
             return;
         }
         if (!Validation.isPositiveNumber(quantityText)) {
@@ -122,26 +106,18 @@ public class CreateOrderActivity extends AppCompatActivity {
         }
 
         InventoryItem item = items.get(spinnerItem.getSelectedItemPosition());
-        User supplier = suppliers.get(spinnerSupplier.getSelectedItemPosition());
-        int quantity = Integer.parseInt(quantityText.trim());
-        long myId = SessionManager.getUserId(this);
+        if (item.supplierId == null) {
+            Toast.makeText(this, "This item has no supplier yet", Toast.LENGTH_LONG).show();
+            return;
+        }
 
-        CreateOrderRequest request = new CreateOrderRequest(item.itemId, quantity, myId, supplier.userId);
-        ApiClient.getApi(this).createOrder(request).enqueue(new Callback<PurchaseOrder>() {
-            @Override
-            public void onResponse(Call<PurchaseOrder> call, Response<PurchaseOrder> response) {
-                if (response.isSuccessful()) {
-                    Toast.makeText(CreateOrderActivity.this, "Order placed", Toast.LENGTH_SHORT).show();
-                    finish();
-                } else {
-                    Toast.makeText(CreateOrderActivity.this, ApiClient.getErrorMessage(response), Toast.LENGTH_LONG).show();
-                }
-            }
-
-            @Override
-            public void onFailure(Call<PurchaseOrder> call, Throwable t) {
-                Toast.makeText(CreateOrderActivity.this, "Could not connect to the server", Toast.LENGTH_LONG).show();
-            }
-        });
+        Intent intent = new Intent(this, CheckoutActivity.class);
+        intent.putExtra("itemId", item.itemId);
+        intent.putExtra("itemName", item.itemName);
+        intent.putExtra("unitPrice", item.unitPrice);
+        intent.putExtra("quantity", Integer.parseInt(quantityText.trim()));
+        intent.putExtra("supplierId", (long) item.supplierId);
+        intent.putExtra("supplierName", item.supplierName);
+        startActivity(intent);
     }
 }

@@ -12,6 +12,8 @@
 
     <application
         android:allowBackup="false"
+        android:icon="@mipmap/ic_launcher"
+        android:roundIcon="@mipmap/ic_launcher_round"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/Theme.CentralChain"
@@ -28,16 +30,19 @@
 
         <activity android:name=".activities.LoginActivity" />
         <activity android:name=".activities.SignupActivity" />
+        <activity android:name=".activities.VerifyActivity" />
 
         <activity android:name=".activities.BuyerActivity" />
         <activity android:name=".activities.ProductsActivity" />
         <activity android:name=".activities.CreateOrderActivity" />
+        <activity android:name=".activities.CheckoutActivity" />
         <activity android:name=".activities.OrderDetailsActivity" />
 
         <activity android:name=".activities.SupplierActivity" />
         <activity android:name=".activities.SupplierOrdersActivity" />
         <activity android:name=".activities.InventoryActivity" />
         <activity android:name=".activities.InventoryItemActivity" />
+        <activity android:name=".activities.ReportsActivity" />
 
         <activity android:name=".activities.ChatListActivity" />
         <activity

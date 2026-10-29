@@ -8,4 +8,5 @@ public class LoginResponse {
     public String email;
     public String fullName;
     public String roleName;
+    public String otp;
 }

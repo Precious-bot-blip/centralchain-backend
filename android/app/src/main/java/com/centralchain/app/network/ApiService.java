@@ -9,11 +9,13 @@ import com.centralchain.app.models.LoginResponse;
 import com.centralchain.app.models.Message;
 import com.centralchain.app.models.ProofRequest;
 import com.centralchain.app.models.PurchaseOrder;
+import com.centralchain.app.models.ReportRow;
 import com.centralchain.app.models.RegisterRequest;
 import com.centralchain.app.models.SendMessageRequest;
 import com.centralchain.app.models.UpdateOrderRequest;
 import com.centralchain.app.models.User;
 import com.centralchain.app.models.UserRequest;
+import com.centralchain.app.models.VerifyRequest;
 
 import java.util.List;
 
@@ -35,7 +37,10 @@ public interface ApiService {
     Call<LoginResponse> login(@Body LoginRequest request);
 
     @POST("api/auth/register")
-    Call<Void> register(@Body RegisterRequest request);
+    Call<LoginResponse> register(@Body RegisterRequest request);
+
+    @POST("api/auth/verify")
+    Call<Void> verify(@Body VerifyRequest request);
 
     // users
     @GET("api/users")
@@ -98,6 +103,7 @@ public interface ApiService {
     @PATCH("api/purchase-orders/{id}/approve")
     Call<PurchaseOrder> approveOrder(@Path("id") long id);
 
+    // also used to change the driver
     @PATCH("api/purchase-orders/{id}/dispatch")
     Call<PurchaseOrder> dispatchOrder(@Path("id") long id, @Query("driverId") long driverId);
 
@@ -136,4 +142,11 @@ public interface ApiService {
 
     @POST("api/messages")
     Call<Message> sendMessage(@Body SendMessageRequest request);
+
+    // reports, only the logged in supplier's items
+    @GET("api/reports/top-items")
+    Call<List<ReportRow>> getTopItems();
+
+    @GET("api/reports/stock-by-warehouse")
+    Call<List<ReportRow>> getStockByWarehouse();
 }

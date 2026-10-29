@@ -18,20 +18,20 @@
 
     <TextView
         style="@style/CC.Pill.Primary"
-        android:text="Past Orders" />
+        android:text="Active orders" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/list_past_orders"
+        android:id="@+id/list_active_orders"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1" />
 
     <TextView
         style="@style/CC.Pill.Primary"
-        android:text="Active orders" />
+        android:text="Past Orders" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/list_active_orders"
+        android:id="@+id/list_past_orders"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1" />

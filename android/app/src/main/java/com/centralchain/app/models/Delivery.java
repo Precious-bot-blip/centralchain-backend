@@ -12,6 +12,7 @@ public class Delivery {
     public long poId;
     public String poNumber;
     public int poQuantity;
+    public String deliveryAddress;
     public long itemId;
     public String itemSku;
     public String itemName;

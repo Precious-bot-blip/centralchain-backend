@@ -42,6 +42,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
         InventoryItem item = items.get(position);
         holder.textName.setText(item.itemName);
         holder.textPrice.setText(String.format(Locale.US, "R%.2f each", item.unitPrice));
+        holder.textSupplier.setText(item.supplierId != null ? "From " + item.supplierName : "No supplier yet");
 
         if (item.quantityInStock > 0) {
             holder.textAvailable.setText(item.quantityInStock + " available");
@@ -63,11 +64,12 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView textName, textPrice, textAvailable;
+        TextView textName, textPrice, textSupplier, textAvailable;
 
         ViewHolder(View view) {
             super(view);
             textName = view.findViewById(R.id.text_name);
+            textSupplier = view.findViewById(R.id.text_supplier);
             textPrice = view.findViewById(R.id.text_price);
             textAvailable = view.findViewById(R.id.text_available);
         }

@@ -39,7 +39,7 @@ public class OrderDetailsActivity extends AppCompatActivity {
 
     private TextView textPoNumber, textStatus, textItemName, textItemSku;
     private View cardDelivery;
-    private View btnApprove, btnDispatch, btnEdit, btnCancel, btnDelete;
+    private View btnApprove, btnDispatch, btnReassign, btnEdit, btnCancel, btnDelete;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,13 +59,15 @@ public class OrderDetailsActivity extends AppCompatActivity {
         cardDelivery = findViewById(R.id.card_delivery);
         btnApprove = findViewById(R.id.btn_approve);
         btnDispatch = findViewById(R.id.btn_dispatch);
+        btnReassign = findViewById(R.id.btn_reassign);
         btnEdit = findViewById(R.id.btn_edit);
         btnCancel = findViewById(R.id.btn_cancel);
         btnDelete = findViewById(R.id.btn_delete);
 
         btnApprove.setOnClickListener(v ->
                 ApiClient.getApi(this).approveOrder(orderId).enqueue(updateCallback("Order approved")));
-        btnDispatch.setOnClickListener(v -> pickDriver());
+        btnDispatch.setOnClickListener(v -> pickDriver(false));
+        btnReassign.setOnClickListener(v -> pickDriver(true));
         btnEdit.setOnClickListener(v -> changeQuantity());
         btnCancel.setOnClickListener(v -> confirmCancel());
         btnDelete.setOnClickListener(v -> confirmDelete());
@@ -128,6 +130,15 @@ public class OrderDetailsActivity extends AppCompatActivity {
             rowDriver.setVisibility(View.GONE);
         }
 
+        // address row only if the api sends it
+        View rowAddress = findViewById(R.id.row_address);
+        if (order.deliveryAddress != null) {
+            setRow(R.id.row_address, "Deliver to", order.deliveryAddress);
+            rowAddress.setVisibility(View.VISIBLE);
+        } else {
+            rowAddress.setVisibility(View.GONE);
+        }
+
         boolean isBuyer = Role.BUYER.equals(role) || Role.ADMIN.equals(role);
         boolean isSupplier = Role.SUPPLIER.equals(role) || Role.ADMIN.equals(role);
         String status = order.status;
@@ -147,6 +158,9 @@ public class OrderDetailsActivity extends AppCompatActivity {
         showButton(btnCancel, (isBuyer || isSupplier) && order.isActive());
         // only admin can delete an order for good
         showButton(btnDelete, Role.ADMIN.equals(role) && (isPending || isCancelled));
+
+        // shown after the delivery loads
+        btnReassign.setVisibility(View.GONE);
 
         // dispatched orders have a delivery
         if (order.assignedDriverId != null) {
@@ -175,6 +189,12 @@ public class OrderDetailsActivity extends AppCompatActivity {
                     setRow(R.id.row_delivered_at, "Delivered on",
                             delivery.deliveredAt != null ? StatusStyle.formatDate(delivery.deliveredAt) : "Not yet");
                     cardDelivery.setVisibility(View.VISIBLE);
+
+                    // supplier can swap the driver if it has not left yet or it failed
+                    boolean isSupplier = Role.SUPPLIER.equals(role) || Role.ADMIN.equals(role);
+                    boolean canSwap = Delivery.ASSIGNED.equals(delivery.deliveryStatus)
+                            || Delivery.FAILED.equals(delivery.deliveryStatus);
+                    showButton(btnReassign, isSupplier && PurchaseOrder.DISPATCHED.equals(order.status) && canSwap);
                 }
             }
 
@@ -251,8 +271,8 @@ public class OrderDetailsActivity extends AppCompatActivity {
         });
     }
 
-    // get the drivers and pick one
-    private void pickDriver() {
+    // get the drivers and pick one, also used to change the driver
+    private void pickDriver(boolean reassign) {
         ApiClient.getApi(this).getUsers().enqueue(new Callback<List<User>>() {
             @Override
             public void onResponse(Call<List<User>> call, Response<List<User>> response) {
@@ -263,12 +283,14 @@ public class OrderDetailsActivity extends AppCompatActivity {
 
                 List<User> drivers = new ArrayList<>();
                 for (User user : response.body()) {
-                    if (Role.DRIVER.equals(user.roleName)) {
+                    // leave out the current driver when changing
+                    boolean isCurrent = reassign && order.assignedDriverId != null && user.userId == order.assignedDriverId;
+                    if (Role.DRIVER.equals(user.roleName) && !isCurrent) {
                         drivers.add(user);
                     }
                 }
                 if (drivers.isEmpty()) {
-                    Toast.makeText(OrderDetailsActivity.this, "There are no drivers yet", Toast.LENGTH_LONG).show();
+                    Toast.makeText(OrderDetailsActivity.this, "There are no other drivers", Toast.LENGTH_LONG).show();
                     return;
                 }
 
@@ -278,11 +300,12 @@ public class OrderDetailsActivity extends AppCompatActivity {
                 }
 
                 new AlertDialog.Builder(OrderDetailsActivity.this)
-                        .setTitle("Pick a driver")
+                        .setTitle(reassign ? "Pick a new driver" : "Pick a driver")
                         .setItems(names, (dialog, which) -> {
                             long driverId = drivers.get(which).userId;
+                            // dispatch again with a new driver changes it
                             ApiClient.getApi(OrderDetailsActivity.this).dispatchOrder(orderId, driverId)
-                                    .enqueue(updateCallback("Order dispatched"));
+                                    .enqueue(updateCallback(reassign ? "Driver changed" : "Order dispatched"));
                         })
                         .show();
             }
@@ -294,7 +317,7 @@ public class OrderDetailsActivity extends AppCompatActivity {
         });
     }
 
-    // used by approve, dispatch, edit and cancel
+    // used by approve, dispatch, change driver, edit and cancel
     private Callback<PurchaseOrder> updateCallback(String successMessage) {
         return new Callback<PurchaseOrder>() {
             @Override

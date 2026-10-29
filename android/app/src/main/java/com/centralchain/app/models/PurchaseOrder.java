@@ -15,6 +15,7 @@ public class PurchaseOrder {
     public String itemSku;
     public String itemName;
     public int quantity;
+    public String deliveryAddress;
     public String status;
     public long createdByUserId;
     public String createdByUserName;

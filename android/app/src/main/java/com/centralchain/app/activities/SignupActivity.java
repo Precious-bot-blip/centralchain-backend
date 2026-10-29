@@ -1,5 +1,6 @@
 package com.centralchain.app.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -12,6 +13,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.centralchain.app.R;
+import com.centralchain.app.models.LoginResponse;
 import com.centralchain.app.models.RegisterRequest;
 import com.centralchain.app.models.Role;
 import com.centralchain.app.network.ApiClient;
@@ -95,14 +97,18 @@ public class SignupActivity extends AppCompatActivity {
         btnCreate.setEnabled(false);
 
         RegisterRequest request = new RegisterRequest(name, email, password, role);
-        ApiClient.getApi(this).register(request).enqueue(new Callback<Void>() {
+        ApiClient.getApi(this).register(request).enqueue(new Callback<LoginResponse>() {
             @Override
-            public void onResponse(Call<Void> call, Response<Void> response) {
+            public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
                 progress.setVisibility(View.GONE);
                 btnCreate.setEnabled(true);
 
-                if (response.isSuccessful()) {
-                    Toast.makeText(SignupActivity.this, "Account created, you can log in now", Toast.LENGTH_LONG).show();
+                if (response.isSuccessful() && response.body() != null) {
+                    // go enter the code
+                    Intent intent = new Intent(SignupActivity.this, VerifyActivity.class);
+                    intent.putExtra("email", email);
+                    intent.putExtra("code", response.body().otp);
+                    startActivity(intent);
                     finish();
                 } else {
                     Toast.makeText(SignupActivity.this, ApiClient.getErrorMessage(response), Toast.LENGTH_LONG).show();
@@ -110,7 +116,7 @@ public class SignupActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(Call<Void> call, Throwable t) {
+            public void onFailure(Call<LoginResponse> call, Throwable t) {
                 progress.setVisibility(View.GONE);
                 btnCreate.setEnabled(true);
                 Toast.makeText(SignupActivity.this, "Could not connect to the server", Toast.LENGTH_LONG).show();

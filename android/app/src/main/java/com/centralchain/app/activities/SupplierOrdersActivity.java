@@ -16,6 +16,7 @@ import com.centralchain.app.models.PurchaseOrder;
 import com.centralchain.app.network.ApiClient;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import retrofit2.Call;
@@ -76,6 +77,8 @@ public class SupplierOrdersActivity extends AppCompatActivity {
                 // the api already only sends this supplier's orders
                 allOrders.clear();
                 allOrders.addAll(response.body());
+                // a to z by item name
+                Collections.sort(allOrders, (a, b) -> a.itemName.compareToIgnoreCase(b.itemName));
                 showTab(currentTab);
             }
 

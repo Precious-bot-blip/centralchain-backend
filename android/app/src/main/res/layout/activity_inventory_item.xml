@@ -86,13 +86,22 @@
             android:importantForAutofill="no"
             android:inputType="numberDecimal" />
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btn_save"
-            style="@style/CC.Button.Primary"
+        <!-- only for admin adding an item -->
+        <LinearLayout
+            android:id="@+id/group_supplier"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:text="Save item" />
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <TextView style="@style/CC.Label" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Supplier" />
+
+            <Spinner
+                android:id="@+id/spinner_supplier"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:background="@drawable/bg_input" />
+        </LinearLayout>
 
         <!-- only when editing -->
         <LinearLayout
@@ -137,6 +146,14 @@
                     android:text="Apply" />
             </LinearLayout>
         </LinearLayout>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_save"
+            style="@style/CC.Button.Primary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="Save item" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_delete"

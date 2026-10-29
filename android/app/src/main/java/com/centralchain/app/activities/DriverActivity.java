@@ -16,6 +16,7 @@ import com.centralchain.app.network.ApiClient;
 import com.centralchain.app.network.SessionManager;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import retrofit2.Call;
@@ -33,6 +34,7 @@ public class DriverActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_driver);
+        MainActivity.showRole(this);
 
         TextView title = findViewById(R.id.screen_title);
         title.setText("Hi " + SessionManager.getFullName(this));
@@ -79,6 +81,9 @@ public class DriverActivity extends AppCompatActivity {
                         finishedDeliveries.add(delivery);
                     }
                 }
+                // a to z by item name
+                Collections.sort(openDeliveries, (a, b) -> a.itemName.compareToIgnoreCase(b.itemName));
+                Collections.sort(finishedDeliveries, (a, b) -> a.itemName.compareToIgnoreCase(b.itemName));
                 openAdapter.notifyDataSetChanged();
                 finishedAdapter.notifyDataSetChanged();
             }

@@ -48,4 +48,21 @@ public class Validation {
         String name = fileName.toLowerCase();
         return name.endsWith(".jpg") || name.endsWith(".jpeg") || name.endsWith(".png") || name.endsWith(".webp");
     }
+
+    // card number is 16 digits, spaces are fine
+    public static boolean isValidCardNumber(String text) {
+        return text != null && text.replace(" ", "").matches("\\d{16}");
+    }
+
+    // expiry like 08/27
+    public static boolean isValidExpiry(String text) {
+        if (text == null || !text.trim().matches("\\d{2}/\\d{2}")) return false;
+        int month = Integer.parseInt(text.trim().substring(0, 2));
+        return month >= 1 && month <= 12;
+    }
+
+    // cvv is 3 digits
+    public static boolean isValidCvv(String text) {
+        return text != null && text.trim().matches("\\d{3}");
+    }
 }

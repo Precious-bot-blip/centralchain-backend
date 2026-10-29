@@ -2,7 +2,9 @@ package com.centralchain.app.activities;
 
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -12,8 +14,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.centralchain.app.R;
 import com.centralchain.app.models.InventoryItem;
 import com.centralchain.app.models.InventoryRequest;
+import com.centralchain.app.models.Role;
+import com.centralchain.app.models.User;
 import com.centralchain.app.network.ApiClient;
+import com.centralchain.app.network.SessionManager;
 import com.centralchain.app.utils.Validation;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -26,6 +34,9 @@ public class InventoryItemActivity extends AppCompatActivity {
     private boolean isNewItem;
     private EditText inputSku, inputName, inputLocation, inputQuantity, inputThreshold, inputPrice, inputAmount;
     private TextView textStock;
+    private Spinner spinnerSupplier;
+    private List<User> suppliers = new ArrayList<>();
+    private boolean isAdmin;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,9 +55,17 @@ public class InventoryItemActivity extends AppCompatActivity {
         inputAmount = findViewById(R.id.input_delta);
         textStock = findViewById(R.id.text_stock);
 
+        spinnerSupplier = findViewById(R.id.spinner_supplier);
+        isAdmin = Role.ADMIN.equals(SessionManager.getRole(this));
+
         TextView title = findViewById(R.id.screen_title);
         if (isNewItem) {
             title.setText("New item");
+            // admin picks who owns the item, a supplier owns it themself
+            if (isAdmin) {
+                findViewById(R.id.group_supplier).setVisibility(View.VISIBLE);
+                loadSuppliers();
+            }
         } else {
             title.setText("Edit item");
             // sku cant change and stock is changed with adjust
@@ -87,6 +106,31 @@ public class InventoryItemActivity extends AppCompatActivity {
         });
     }
 
+    private void loadSuppliers() {
+        ApiClient.getApi(this).getUsers().enqueue(new Callback<List<User>>() {
+            @Override
+            public void onResponse(Call<List<User>> call, Response<List<User>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    suppliers.clear();
+                    for (User user : response.body()) {
+                        if (Role.SUPPLIER.equals(user.roleName)) {
+                            suppliers.add(user);
+                        }
+                    }
+                    spinnerSupplier.setAdapter(new ArrayAdapter<>(InventoryItemActivity.this,
+                            android.R.layout.simple_spinner_dropdown_item, suppliers));
+                } else {
+                    Toast.makeText(InventoryItemActivity.this, ApiClient.getErrorMessage(response), Toast.LENGTH_LONG).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<User>> call, Throwable t) {
+                Toast.makeText(InventoryItemActivity.this, "Could not connect to the server", Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
     private void saveItem() {
         String sku = inputSku.getText().toString().trim();
         String name = inputName.getText().toString().trim();
@@ -121,6 +165,10 @@ public class InventoryItemActivity extends AppCompatActivity {
             inputPrice.setError("Price must be more than 0");
             valid = false;
         }
+        if (isNewItem && isAdmin && suppliers.isEmpty()) {
+            Toast.makeText(this, "Pick a supplier", Toast.LENGTH_SHORT).show();
+            valid = false;
+        }
         if (!valid) {
             return;
         }
@@ -135,6 +183,11 @@ public class InventoryItemActivity extends AppCompatActivity {
         if (isNewItem) {
             request.sku = sku;
             request.quantityInStock = Integer.parseInt(quantity.trim());
+            if (isAdmin) {
+                request.supplierId = suppliers.get(spinnerSupplier.getSelectedItemPosition()).userId;
+            } else {
+                request.supplierId = SessionManager.getUserId(this);
+            }
             call = ApiClient.getApi(this).addInventoryItem(request);
         } else {
             call = ApiClient.getApi(this).updateInventoryItem(itemId, request);

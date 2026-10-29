@@ -87,7 +87,18 @@ public class LoginActivity extends AppCompatActivity {
                     SessionManager.saveLogin(LoginActivity.this, user);
                     getUserId(user.email, user.roleName);
                 } else {
-                    Toast.makeText(LoginActivity.this, ApiClient.getErrorMessage(response), Toast.LENGTH_LONG).show();
+                    String error = ApiClient.getErrorMessage(response);
+                    Toast.makeText(LoginActivity.this, error, Toast.LENGTH_LONG).show();
+
+                    // not verified yet so send them to enter the code
+                    if (error.startsWith("Please verify")) {
+                        Intent intent = new Intent(LoginActivity.this, VerifyActivity.class);
+                        intent.putExtra("email", email);
+                        if (error.contains("Code: ")) {
+                            intent.putExtra("code", error.substring(error.indexOf("Code: ") + 6).trim());
+                        }
+                        startActivity(intent);
+                    }
                 }
             }
 

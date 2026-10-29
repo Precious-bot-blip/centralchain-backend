@@ -8,6 +8,8 @@ public class InventoryItem {
     public int quantityInStock;
     public int minSafetyThreshold;
     public double unitPrice;
+    public Long supplierId;
+    public String supplierName;
     public String updatedAt;
 
     public boolean isLowStock() {

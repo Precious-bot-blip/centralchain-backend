@@ -8,4 +8,6 @@ public class InventoryRequest {
     public Integer quantityInStock;
     public Integer minSafetyThreshold;
     public Double unitPrice;
+    // only sent when adding
+    public Long supplierId;
 }

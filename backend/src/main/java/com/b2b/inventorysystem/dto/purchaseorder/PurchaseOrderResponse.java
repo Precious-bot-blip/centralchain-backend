@@ -23,6 +23,7 @@ public class PurchaseOrderResponse {
 
     private Integer quantity;
     private String status;
+    private String deliveryAddress;
 
     // User info
     private Integer createdByUserId;

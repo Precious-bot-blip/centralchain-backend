@@ -3,10 +3,12 @@ package com.b2b.inventorysystem.controller;
 import com.b2b.inventorysystem.dto.inventory.InventoryCreateRequest;
 import com.b2b.inventorysystem.dto.inventory.InventoryResponse;
 import com.b2b.inventorysystem.dto.inventory.InventoryUpdateRequest;
+import com.b2b.inventorysystem.repository.UserRepository;
 import com.b2b.inventorysystem.service.InventoryService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,15 +18,19 @@ import java.util.List;
 public class InventoryController {
 
     private final InventoryService inventoryService;
+    private final UserRepository userRepository;
 
-    public InventoryController(InventoryService inventoryService) {
+    public InventoryController(InventoryService inventoryService, UserRepository userRepository) {
         this.inventoryService = inventoryService;
+        this.userRepository = userRepository;
     }
 
     // READ
     @GetMapping
-    public ResponseEntity<List<InventoryResponse>> getAllItems() {
-        return ResponseEntity.ok(inventoryService.getAllItems());
+    public ResponseEntity<List<InventoryResponse>> getAllItems(Authentication auth) {
+        String role = auth.getAuthorities().iterator().next().getAuthority().replace("ROLE_", "");
+        Integer userId = userRepository.findByEmail(auth.getName()).get().getUserId();
+        return ResponseEntity.ok(inventoryService.getAllItems(userId, role));
     }
 
     @GetMapping("/{id}")

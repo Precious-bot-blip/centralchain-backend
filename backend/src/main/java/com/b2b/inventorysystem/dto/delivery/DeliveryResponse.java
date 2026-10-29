@@ -31,7 +31,9 @@ public class DeliveryResponse {
 
     // Delivery details
     private String deliveryStatus;
+    private String deliveryAddress;
     private String signatureUrl;
     private String photoProofUrl;
     private LocalDateTime deliveredAt;
+
 }

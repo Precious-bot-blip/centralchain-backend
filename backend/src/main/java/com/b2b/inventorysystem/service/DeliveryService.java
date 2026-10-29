@@ -125,6 +125,7 @@ public class DeliveryService {
                 d.getDriver().getUserId(),
                 d.getDriver().getFullName(),
                 d.getDeliveryStatus(),
+                d.getPurchaseOrder().getDeliveryAddress(),
                 d.getSignatureUrl(),
                 d.getPhotoProofUrl(),
                 d.getDeliveredAt()

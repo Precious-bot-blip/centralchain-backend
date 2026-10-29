@@ -98,7 +98,9 @@ public class PurchaseOrderService {
         po.setCreatedByUser(creator);
         po.setAssignedSupplier(supplier);
 
+        po.setDeliveryAddress(request.getDeliveryAddress());
         PurchaseOrder saved = poRepository.save(po);
+        poRepository.save(po);
         return toResponse(saved);
     }
 
@@ -157,13 +159,12 @@ public class PurchaseOrderService {
     }
 
 
-    // STATE TRANSITION: APPROVED -> DISPATCHED
     @Transactional
     public PurchaseOrderResponse dispatchOrder(Integer id, Integer driverId) {
         PurchaseOrder po = findOrderById(id);
 
-        if (!"APPROVED".equals(po.getStatus()) && !"PROCESSING".equals(po.getStatus())) {
-            throw new ConflictException("Cannot dispatch — order must be APPROVED or PROCESSING. Current status: " + po.getStatus());
+        if (!"APPROVED".equals(po.getStatus()) && !"PROCESSING".equals(po.getStatus()) && !"DISPATCHED".equals(po.getStatus())) {
+            throw new ConflictException("Cannot dispatch — order must be APPROVED, PROCESSING, or DISPATCHED. Current: " + po.getStatus());
         }
 
         User driver = userRepository.findById(driverId)
@@ -176,10 +177,15 @@ public class PurchaseOrderService {
         po.setStatus("DISPATCHED");
         po.setAssignedDriver(driver);
 
-        Delivery delivery = new Delivery();
+        Delivery delivery = deliveryRepository.findByPurchaseOrderPoId(po.getPoId())
+                .orElse(new Delivery());
+
         delivery.setPurchaseOrder(po);
         delivery.setDriver(driver);
         delivery.setDeliveryStatus("ASSIGNED");
+        delivery.setSignatureUrl(null);
+        delivery.setPhotoProofUrl(null);
+        delivery.setDeliveredAt(null);
 
         PurchaseOrder saved = poRepository.save(po);
         deliveryRepository.save(delivery);
@@ -280,6 +286,7 @@ public class PurchaseOrderService {
                 po.getItem().getItemName(),
                 po.getQuantity(),
                 po.getStatus(),
+                po.getDeliveryAddress(),
                 po.getCreatedByUser().getUserId(),
                 po.getCreatedByUser().getFullName(),
                 po.getAssignedSupplier().getUserId(),

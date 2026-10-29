@@ -28,11 +28,14 @@ public class InventoryService {
     }
 
     // READ
-    public List<InventoryResponse> getAllItems() {
-        return inventoryRepository.findAll()
-                .stream()
-                .map(this::toResponse)
-                .toList();
+    public List<InventoryResponse> getAllItems(Integer userId, String role) {
+        List<Inventory> items;
+        if ("SUPPLIER".equals(role)) {
+            items = inventoryRepository.findBySupplierUserId(userId);
+        } else {
+            items = inventoryRepository.findAll();
+        }
+        return items.stream().map(this::toResponse).toList();
     }
 
     public InventoryResponse getItemById(Integer id) {

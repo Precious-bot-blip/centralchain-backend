@@ -135,6 +135,13 @@ public class InventoryService {
         }
     }
 
+    public List<InventoryResponse> getLowStockItemsBySupplier(Integer supplierId) {
+        return inventoryRepository.findLowStockItemsBySupplier(supplierId)
+                .stream()
+                .map(this::toResponse)
+                .toList();
+    }
+
     // HELPER
     private InventoryResponse toResponse(Inventory item) {
         Integer supplierId = item.getSupplier() != null ? item.getSupplier().getUserId() : null;

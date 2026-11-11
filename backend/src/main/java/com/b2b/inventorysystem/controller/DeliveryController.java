@@ -1,5 +1,6 @@
 package com.b2b.inventorysystem.controller;
 
+import com.b2b.inventorysystem.dto.delivery.DeliveryFailRequest;
 import com.b2b.inventorysystem.dto.delivery.DeliveryProofRequest;
 import com.b2b.inventorysystem.dto.delivery.DeliveryResponse;
 import com.b2b.inventorysystem.service.DeliveryService;
@@ -57,8 +58,8 @@ public class DeliveryController {
     }
 
     @PatchMapping("/{id}/failed")
-    public ResponseEntity<DeliveryResponse> markFailed(@PathVariable Integer id) {
-        return ResponseEntity.ok(deliveryService.markFailed(id));
+    public ResponseEntity<DeliveryResponse> markFailed(@PathVariable Integer id, @Valid @RequestBody DeliveryFailRequest request) {
+        return ResponseEntity.ok(deliveryService.markFailed(id, request));
     }
 
     // PROOF OF DELIVERY

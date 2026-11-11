@@ -80,6 +80,10 @@ public class PurchaseOrderService {
         Inventory item = inventoryRepository.findById(request.getItemId())
                 .orElseThrow(() -> new ResourceNotFoundException("Item not found: " + request.getItemId()));
 
+        if (request.getQuantity() > item.getQuantityInStock()) {
+            throw new BadRequestException("Cannot order " + request.getQuantity() + " items. Only " + item.getQuantityInStock() + " in stock.");
+        }
+
         User creator = userRepository.findById(request.getCreatedByUserId())
                 .orElseThrow(() -> new ResourceNotFoundException("Creator not found: " + request.getCreatedByUserId()));
 

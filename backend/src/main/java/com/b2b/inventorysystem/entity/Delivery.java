@@ -40,4 +40,10 @@ public class Delivery {
 
     @Column(name = "delivered_at")
     private LocalDateTime deliveredAt;
+
+    @Column(name = "fault_party")
+    private String faultParty;
+
+    @Column(name = "failure_reason")
+    private String failureReason;
 }

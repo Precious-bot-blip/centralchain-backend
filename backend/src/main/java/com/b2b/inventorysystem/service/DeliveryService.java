@@ -1,11 +1,14 @@
 package com.b2b.inventorysystem.service;
 
+import com.b2b.inventorysystem.dto.delivery.DeliveryFailRequest;
 import com.b2b.inventorysystem.dto.delivery.DeliveryProofRequest;
 import com.b2b.inventorysystem.dto.delivery.DeliveryResponse;
 import com.b2b.inventorysystem.entity.Delivery;
+import com.b2b.inventorysystem.entity.PurchaseOrder;
 import com.b2b.inventorysystem.exception.ConflictException;
 import com.b2b.inventorysystem.exception.ResourceNotFoundException;
 import com.b2b.inventorysystem.repository.DeliveryRepository;
+import com.b2b.inventorysystem.repository.PurchaseOrderRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,11 +20,14 @@ public class DeliveryService {
 
     private final DeliveryRepository deliveryRepository;
     private final PurchaseOrderService purchaseOrderService;
+    private final PurchaseOrderRepository poRepository;
 
     public DeliveryService(DeliveryRepository deliveryRepository,
-                           PurchaseOrderService purchaseOrderService) {
+                           PurchaseOrderService purchaseOrderService,
+                           PurchaseOrderRepository poRepository) {
         this.deliveryRepository = deliveryRepository;
         this.purchaseOrderService = purchaseOrderService;
+        this.poRepository = poRepository;
     }
 
     // READ
@@ -107,6 +113,25 @@ public class DeliveryService {
         return toResponse(deliveryRepository.save(delivery));
     }
 
+    @Transactional
+    public DeliveryResponse markFailed(Integer id, DeliveryFailRequest request) {
+        Delivery delivery = findDeliveryById(id);
+
+        if (!"IN_TRANSIT".equals(delivery.getDeliveryStatus())) {
+            throw new ConflictException("Cannot mark FAILED — only IN_TRANSIT deliveries. Current: " + delivery.getDeliveryStatus());
+        }
+
+        delivery.setDeliveryStatus("FAILED");
+        delivery.setFaultParty(request.getFaultParty());
+        delivery.setFailureReason(request.getFailureReason());
+
+        PurchaseOrder po = delivery.getPurchaseOrder();
+        po.setStatus("FAILED");
+        poRepository.save(po);
+
+        return toResponse(deliveryRepository.save(delivery));
+    }
+
     // HELPERS
     private Delivery findDeliveryById(Integer id) {
         return deliveryRepository.findById(id)
@@ -128,7 +153,9 @@ public class DeliveryService {
                 d.getPurchaseOrder().getDeliveryAddress(),
                 d.getSignatureUrl(),
                 d.getPhotoProofUrl(),
-                d.getDeliveredAt()
+                d.getDeliveredAt(),
+                d.getFaultParty(),
+                d.getFailureReason()
         );
     }
 }

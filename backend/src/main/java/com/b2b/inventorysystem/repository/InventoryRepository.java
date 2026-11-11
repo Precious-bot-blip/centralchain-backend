@@ -24,5 +24,8 @@ public interface InventoryRepository extends JpaRepository<Inventory, Integer> {
     @Query("SELECT i.warehouseLocation, SUM(i.quantityInStock) FROM Inventory i WHERE i.supplier.userId = :supplierId GROUP BY i.warehouseLocation")
     List<Object[]> findStockByWarehouseForSupplier(@Param("supplierId") Integer supplierId);
 
+    @Query("SELECT i FROM Inventory i WHERE i.quantityInStock <= i.minSafetyThreshold AND i.supplier.userId = :supplierId")
+    List<Inventory> findLowStockItemsBySupplier(@Param("supplierId") Integer supplierId);
+
     List<Inventory> findBySupplierUserId(Integer supplierId);
 }

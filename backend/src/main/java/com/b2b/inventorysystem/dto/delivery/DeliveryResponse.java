@@ -36,4 +36,6 @@ public class DeliveryResponse {
     private String photoProofUrl;
     private LocalDateTime deliveredAt;
 
+    private String faultParty;
+    private String failureReason;
 }

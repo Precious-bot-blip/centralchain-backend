@@ -85,15 +85,22 @@ public class DeliveryService {
 
     // STATE: IN_TRANSIT -> FAILED
     @Transactional
-    public DeliveryResponse markFailed(Integer id) {
+    public DeliveryResponse markFailed(Integer id, DeliveryFailRequest request) {
         Delivery delivery = findDeliveryById(id);
 
         if (!"IN_TRANSIT".equals(delivery.getDeliveryStatus())) {
-            throw new ConflictException("Cannot mark FAILED — only IN_TRANSIT deliveries. Current: "
-                    + delivery.getDeliveryStatus());
+            throw new ConflictException("Cannot mark FAILED — only IN_TRANSIT deliveries. Current: " + delivery.getDeliveryStatus());
         }
 
         delivery.setDeliveryStatus("FAILED");
+        delivery.setFaultParty(request.getFaultParty());
+        delivery.setFailureReason(request.getFailureReason());
+
+        // Update the Purchase Order status to FAILED
+        PurchaseOrder po = delivery.getPurchaseOrder();
+        po.setStatus("FAILED");
+        poRepository.save(po);
+
         return toResponse(deliveryRepository.save(delivery));
     }
 
@@ -109,25 +116,6 @@ public class DeliveryService {
 
         delivery.setSignatureUrl(request.getSignatureUrl());
         delivery.setPhotoProofUrl(request.getPhotoProofUrl());
-
-        return toResponse(deliveryRepository.save(delivery));
-    }
-
-    @Transactional
-    public DeliveryResponse markFailed(Integer id, DeliveryFailRequest request) {
-        Delivery delivery = findDeliveryById(id);
-
-        if (!"IN_TRANSIT".equals(delivery.getDeliveryStatus())) {
-            throw new ConflictException("Cannot mark FAILED — only IN_TRANSIT deliveries. Current: " + delivery.getDeliveryStatus());
-        }
-
-        delivery.setDeliveryStatus("FAILED");
-        delivery.setFaultParty(request.getFaultParty());
-        delivery.setFailureReason(request.getFailureReason());
-
-        PurchaseOrder po = delivery.getPurchaseOrder();
-        po.setStatus("FAILED");
-        poRepository.save(po);
 
         return toResponse(deliveryRepository.save(delivery));
     }
